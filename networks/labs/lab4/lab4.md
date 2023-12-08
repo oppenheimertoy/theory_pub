@@ -52,16 +52,16 @@ switch(config)#vlan 6
 ```
 router1(config)#int fa0/0 
 router1(config-if)#no sh
-router1(config-if)#int fa0/0.2 
 
+router1(config-if)#int fa0/0.2 
 router1(config-subif)#encapsulation dot1q 2
 router1(config-subif)#ip address 192.168.2.1 255.255.255.0
-router1(config-subif)#int fa0/0.3
 
+router1(config-subif)#int fa0/0.3
 router1(config-subif)#encapsulation dot1q 3
 router1(config-subif)#ip address 192.168.3.1 255.255.255.0
-router1(config-subif)#int fa1/0
 
+router1(config-subif)#int fa1/0
 router1(config-if)#ip address 192.168.12.1 255.255.255.0
 router1(config-if)#no sh
 
@@ -70,16 +70,16 @@ router1(config-if)#no sh
 router1(config-if)#int fa0/1
 router1(config-if)#ip address 10.10.10.1 255.255.255.252
 router1(config-if)#no sh
-router1(config-if)#int fa0/1.4
 
+router1(config-if)#int fa0/1.4
 router1(config-subif)#encapsulation dot1q 4
 router1(config-subif)#ip address 10.10.14.1 255.255.255.252
-router1(config-subif)#int fa0/1.5
 
+router1(config-subif)#int fa0/1.5
 router1(config-subif)#encapsulation dot1q 5
 router1(config-subif)#ip address 10.10.15.1 255.255.255.252
-router1(config-subif)#int fa0/1.6
 
+router1(config-subif)#int fa0/1.6
 router1(config-subif)#encapsulation dot1q 6
 router1(config-subif)#ip address 10.10.16.1 255.255.255.252
 
@@ -88,8 +88,8 @@ router1(config-subif)#ip address 10.10.16.1 255.255.255.252
 router1(config-subif)#int fa0/1.2
 router1(config-subif)#encapsulation dot1q 2
 router1(config-subif)#ip address 10.10.12.1 255.255.255.252
-router1(config-subif)#int fa0/1.3
 
+router1(config-subif)#int fa0/1.3
 router1(config-subif)#encapsulation dot1q 3
 router1(config-subif)#ip address 10.10.13.1 255.255.255.252
 ```
@@ -98,58 +98,58 @@ router1(config-subif)#ip address 10.10.13.1 255.255.255.252
 
 ```
 router2(config)#int fa1/0
-router2(config-if)#ip address 192.168.1.1 255 255.255.255.0
+router2(config-if)#ip address 192.168.1.1 255.255.255.0
 router2(config-if)#no sh
 
 // Настройка связи с левым роутером
 
 router2(config-if)#int fa0/0
-router2(config-if)#ip address 10.10.10.2 255 255.255.255.252
+router2(config-if)#ip address 10.10.10.2 255.255.255.252
 router2(config-if)#no sh
+
 router2(config-if)#int fa0/0.2
-
 router2(config-subif)#encapsulation dot1q 2
-router2(config-subif)#ip address 10.10.12.2 255 255.255.255.252
+router2(config-subif)#ip address 10.10.12.2 255.255.255.252
+
 router2(config-subif)#int fa0/0.3
-
 router2(config-subif)#encapsulation dot1q 3
-router2(config-subif)#ip address 10.10.13.2 255 255.255.255.252
-router2(config-if)#int fa0/0.4
+router2(config-subif)#ip address 10.10.13.2 255.255.255.252
 
+router2(config-if)#int fa0/0.4
 router2(config-subif)#encapsulation dot1q 4
 router2(config-subif)#ip address 10.10.14.2 255.255.255.252
-router2(config-subif)#int fa0/0.5
 
+router2(config-subif)#int fa0/0.5
 router2(config-subif)#encapsulation dot1q 5
 router2(config-subif)#ip address 10.10.15.2 255.255.255.252
-router2(config-subif)#int fa0/0.6
 
+router2(config-subif)#int fa0/0.6
 router2(config-subif)#encapsulation dot1q 6
 router2(config-subif)#ip address 10.10.16.2 255.255.255.252
 
-//Настройка связи с правым роутером
+// Настройка связи с правым роутером
 
 router2(config-if)#int fa0/1
-router2(config-if)#ip address 10.11.10.1 255 255.255.255.252
+router2(config-if)#ip address 10.11.10.1 255.255.255.252
 router2(config-if)#no sh
+
 router2(config-if)#int fa0/1.2
-
 router2(config-subif)#encapsulation dot1q 2
-router2(config-subif)#ip address 10.11.12.1 255 255.255.255.252
+router2(config-subif)#ip address 10.11.12.1 255.255.255.252
+
 router2(config-subif)#int fa0/1.3
-
 router2(config-subif)#encapsulation dot1q 3
-router2(config-subif)#ip address 10.11.13.1 255 255.255.255.252
-router2(config-if)#int fa0/1.4
+router2(config-subif)#ip address 10.11.13.1 255.255.255.252
 
+router2(config-if)#int fa0/1.4
 router2(config-subif)#encapsulation dot1q 4
 router2(config-subif)#ip address 10.11.14.1 255.255.255.252
-router2(config-subif)#int fa0/1.5
 
+router2(config-subif)#int fa0/1.5
 router2(config-subif)#encapsulation dot1q 5
 router2(config-subif)#ip address 10.11.15.1 255.255.255.252
-router2(config-subif)#int fa0/1.6
 
+router2(config-subif)#int fa0/1.6
 router2(config-subif)#encapsulation dot1q 6
 router2(config-subif)#ip address 10.11.16.1 255.255.255.252
 ```
@@ -157,52 +157,51 @@ router2(config-subif)#ip address 10.11.16.1 255.255.255.252
 ##### Настройка VLAN правого роутера
 
 ```
-router1(config)#int fa0/0 
-router1(config-if)#no sh
-router1(config-if)#int fa0/0.2 
+router3(config)#int fa0/1 
+router3(config-if)#no sh
 
-router1(config-subif)#encapsulation dot1q 2
-router1(config-subif)#ip address 192.168.2.1 255.255.255.0
-router1(config-subif)#int fa0/0.3
+router3(config-if)#int fa0/1.4
+router3(config-subif)#encapsulation dot1q 4
+router3(config-subif)#ip address 192.168.4.1 255.255.255.0
 
-router1(config-subif)#encapsulation dot1q 3
-router1(config-subif)#ip address 192.168.3.1 255.255.255.0
-router1(config-subif)#int fa1/0
+router3(config-subif)#int fa0/1.5
+router3(config-subif)#encapsulation dot1q 5
+router3(config-subif)#ip address 192.168.5.1 255.255.255.0
 
-router1(config-if)#ip address 192.168.12.1 255.255.255.0
-router1(config-if)#no sh
+router3(config-subif)#int fa0/1.6
+router3(config-subif)#encapsulation dot1q 6
+router3(config-subif)#ip address 192.168.6.1 255.255.255.0
 
-// Настройка связи с другими роутерами. Напишем вначале для правых VLAN
+// Настройка связи с другими роутерами. Напишем все VLAN слева
 
-router1(config-if)#int fa0/1
-router1(config-if)#ip address 10.10.10.1 255.255.255.252
-router1(config-if)#no sh
-router1(config-if)#int fa0/1.4
+router3(config-subif)#int fa0/0
+router3(config-if)#no sh
+router3(config-if)#ip address 10.11.10.2 255.255.255.252
 
-router1(config-subif)#encapsulation dot1q 4
-router1(config-subif)#ip address 10.10.14.1 255.255.255.252
-router1(config-subif)#int fa0/1.5
+router3(config-if)#int fa0/0.2
+router3(config-subif)#encapsulation dot1q 2
+router3(config-subif)#ip address 10.11.12.2 255.255.255.252
 
-router1(config-subif)#encapsulation dot1q 5
-router1(config-subif)#ip address 10.10.15.1 255.255.255.252
-router1(config-subif)#int fa0/1.6
+router3(config-if)#int fa0/0.3
+router3(config-subif)#encapsulation dot1q 3
+router3(config-subif)#ip address 10.11.13.2 255.255.255.252
 
-router1(config-subif)#encapsulation dot1q 6
-router1(config-subif)#ip address 10.10.16.1 255.255.255.252
+router3(config-if)#int fa0/0.4
+router3(config-subif)#encapsulation dot1q 4
+router3(config-subif)#ip address 10.11.14.2 255.255.255.252
 
-// Настройка связи с другими роутерами. Напишем левые VLAN. Это нужна для приёма своих VLAN.
+router3(config-if)#int fa0/0.5
+router3(config-subif)#encapsulation dot1q 5
+router3(config-subif)#ip address 10.11.15.2 255.255.255.252
 
-router1(config-subif)#int fa0/1.2
-router1(config-subif)#encapsulation dot1q 2
-router1(config-subif)#ip address 10.10.12.1 255.255.255.252
-router1(config-subif)#int fa0/1.3
-
-router1(config-subif)#encapsulation dot1q 3
-router1(config-subif)#ip address 10.10.13.1 255.255.255.252
+router3(config-if)#int fa0/0.6
+router3(config-subif)#encapsulation dot1q 6
+router3(config-subif)#ip address 10.11.16.2 255.255.255.252
 ```
 
-
 ### Настройка OSPF
+
+#### Настройка среднего роутера
 
 Начнём настройку с роутера посередине
 
@@ -227,7 +226,7 @@ router2(config-if)#network 10.11.16.0 0.0.0.3 area 0
 router2(config-if)#network 192.168.1.0 0.0.0.255 area 0
 ```
 
-Настройка с левого роутера
+#### Настройка левого роутера
 
 ```
 router1(config)#interface loopback 0
@@ -247,7 +246,7 @@ router1(config-if)#network 192.168.3.0 0.0.0.255 area 0
 router1(config-if)#network 192.168.12.0 0.0.0.255 area 0
 ```
 
-Настройка с правого роутера
+#### Настройка правого роутера
 
 ```
 router3(config)#interface loopback 0

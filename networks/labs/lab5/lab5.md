@@ -88,6 +88,28 @@ Router(config)#ip nat inside source list PAT-10 interface fastEthernet 0/0 overl
 
 Таким образом, эта команда означает, что для пакетов, соответствующих условиям в ACL PAT-10, будет выполняться перевод адресов (NAT) через интерфейс FastEthernet 0/0 с использованием PAT для обеспечения уникальности портов для каждого устройства в локальной сети.
 
+### Настройка Static NAT
+
+```
+Router(config)#ip nat inside source static 192.168.20.3 172.18.0.4
+```
+
+### Настройка Dynamic NAT
+
+Задаём пул адресов, вначале указываем имя пула, начальный IP, конечный IP и маску
+
+```
+Router(config)# ip nat pool Dynamic-NAT 172.17.0.10 172.17.0.20 netmask 255.255.255.0
+Router(config)#ip access-list standard Dynamic-list
+Router(config-std-nacl)#permit 192.168.20.0 0.0.0.255
+Router(config-std-nacl)#ex
+
+Router(config)# int fa0/0
+Router(config-if)#ip nat outside
+Router(config-if)#int fa0/1
+Router(config-if)#ip nat inside
+Router(config)#ip nat inside source list Dynamic-list pool Dynamic-NAT
+```
 
 ### Настройка VLAN
 

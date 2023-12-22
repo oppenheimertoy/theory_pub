@@ -23,6 +23,7 @@
 - [Настройка AL левого роутера](#настройка-al-левого-роутера)
 - [Настройка AL правого роутера](#настройка-al-правого-роутера)
 - [Победа](#победа)
+- [Настройка DHCP](#настройка-dhcp)
 
 
 ## Условие
@@ -338,32 +339,32 @@ router1(config-if)#ip access-group NAME in/out
 
 Запретим ПК из VLAN2 пинговать всех. Для этого надо использовать расширенный AL, который удаляет входящие запросы. А именно запрещаем ICMP запросы с этого ПК, но разрешаем всё остальное. И не забываем привязать AL к нужному интерфейсу на ВХОД (in).
 ```
-router1(config)#ip access-list extended VLAN2-OUT
-router1(config-ext-nacl)#deny icmp host 192.168.2.2 any echo
-router1(config-ext-nacl)#permit ip any any
-router1(config-ext-nacl)#ex
-router1(config)#int fa0/0.2
-router1(config-if)#ip access-group VLAN2-OUT in
+router0(config)#ip access-list extended VLAN2-OUT
+router0(config-ext-nacl)#deny icmp host 192.168.2.2 any echo
+router0(config-ext-nacl)#permit ip any any
+router0(config-ext-nacl)#ex
+router0(config)#int fa0/0.2
+router0(config-if)#ip access-group VLAN2-OUT in
 ```
 
 Запретим второму сервеу S2 пинговать всех. А именно запрещаем ICMP запросы с этого сервера, но разрешаем всё остальное.
 ```
-router1(config)#ip access-list extended S2-OUT
-router1(config-ext-nacl)#deny icmp host 192.168.12.2 any echo
-router1(config-ext-nacl)#permit ip any any
-router1(config-ext-nacl)#ex
-router1(config)#int fa1/0
-router1(config-if)#ip access-group S2-OUT in
+router0(config)#ip access-list extended S2-OUT
+router0(config-ext-nacl)#deny icmp host 192.168.12.2 any echo
+router0(config-ext-nacl)#permit ip any any
+router0(config-ext-nacl)#ex
+router0(config)#int fa1/0
+router0(config-if)#ip access-group S2-OUT in
 ```
 
 И, наконец, запретим пинговать ПК из VLAN3.
 ```
-router1(config)#ip access-list extended VLAN3-IN
-router1(config-ext-nacl)#deny icmp any host 192.168.3.2 echo
-router1(config-ext-nacl)#permit ip any any
-router1(config-ext-nacl)#ex
-router1(config)#int fa0/0.3
-router1(config-if)#ip access-group VLAN3-IN out
+router0(config)#ip access-list extended VLAN3-IN
+router0(config-ext-nacl)#deny icmp any host 192.168.3.2 echo
+router0(config-ext-nacl)#permit ip any any
+router0(config-ext-nacl)#ex
+router0(config)#int fa0/0.3
+router0(config-if)#ip access-group VLAN3-IN out
 ```
 
 ##### Настройка AL правого роутера
@@ -382,3 +383,63 @@ router3(config-if)#ip access-group VLAN6-OUT in
 Готовая топология!!!!
 
 ![](./topology3.jpg)
+
+## Настройка DHCP
+
+Топология, которую нужно реализовать показана на рисунке ниже. 
+
+### Задания, которые нужно сделать:
+
+1. Настроить работу DHCP сервера в подсети VLAN1.
+2. В подсети, в которой настроен DHCP сервер, сдлеать, чтобы нечётные хосты не могли получать почту (протокол POP3 либо IMAP4).
+2. В подсети, в которой настроен DHCP сервер, сдлеать, чтобы чётные хосты не могли отправлять почту (протокол SMTP).
+3. VLAN2 получает IP с DHCP сервера S2. (ВНИМАНИЕ между VLAN2 и S2 находится маршрутизатор, в отличие от 1 задания).
+4. Настроить удаление DISCOVER пакетов у S2 сервера.
+
+![](./topology4.png)
+
+### Задание 1
+
+Первым делом у PC надо удалить все статические IP, а DHCP серверу задать статический IP (192.168.1.2), включая маску и шлюз по-умолчанию (192.168.1.1).
+
+![](./1.1_DHCP.png)
+
+Далее переходим во вкладку "Services", выбираем настройку "DHCP". В нём уже создан дефолтный "serverPool". Можно изменить его, так как у нас всего один VLAN. для этого Меняем "Default Gateway" на тот, который используется в данном VLAN, поскольку используется VLAN1, то задаём (192.168.1.1). В поле "DNS Server" указываем DNS гугла (8.8.8.8). В поле "Start IP Address" указываем IP сети (192.168.1.0) и задаём его маску (255.255.255.0). Также, не забыаем над именем включить флажок "On" для включения сервера.
+
+![](./1.2_DHCP.png)
+
+Теперь настроим роутер. Он должен пересылать DHCP запросы DHCP серверу. Для этого нужно настроить интерфейс (или сабинтерфейсы, если больше одного VLANа в подсети). В нашем случае за подсеть отвечает интерфейс fa1/0, поэтому напишем данные команды:
+
+```
+router1(config)#int fa1/0
+router1(config-if)#ip helper-address 192.168.1.2
+```
+
+И, наконец, на ПК заходим в настройку IP и выключаем DHCP. После чего автоматически появится IP.
+
+![](./1.3_DHCP.png)
+
+### Задание 3
+
+Первым делом у PC из VLAN2 надо удалить cтатический IP, а DHCP серверу задать статический IP (192.168.12.2), включая маску и шлюз по-умолчанию (192.168.12.1).
+
+Далее переходим во вкладку "Services", выбираем настройку "DHCP". В нём уже создан дефолтный "serverPool" с IP нашего сервера, поскольку мы настраиваем работа только для VLAN2, то дефолтный "serverPool" менять не будем, хотя он не рабочий, так как неверно указан шлюз по-умолчанию. 
+
+Создадим новый "Pool". Для этого менеям "Pool Name", например, на имя "DHCP-VLAN2". Включаем флажок "On" для включения сервера. Меняем "Default Gateway" на шлюз-поумолчанию в подсети VLAN2 (192.168.2.1). В поле "DNS Server" указываем DNS гугла (8.8.8.8). В поле "Start IP Address" указываем IP сети (192.168.2.0) и задёи его маску (255.255.255.0). Нажимаем кнопку "Add".
+
+![](./3.1_DHCP.png)
+
+Теперь настроим роутер. Он должен пересылать DHCP запросы DHCP серверу. Для этого нужно настроить интерфейс (или сабинтерфейсы, если больше одного VLANа в подсети). В нашем случае за подсеть отвечает интерфейс fa0/0.2, поэтому напишем данные команды:
+
+```
+router1(config)#int fa0/0.2
+router1(config-subif)#ip helper-address 192.168.12.2
+```
+
+Несколько вланов
+
+мы его оставляем и создаём новый. Для этого менеям "Pool Name", например, на имя "DHCP-VLAN1". Меняем "Default Gateway" на тот, который задавали статически (192.168.1.1), то есть до роутера. В поле "DNS Server" указываем DNS гугла (8.8.8.8). В поле "Start IP Address" указываем IP сети (192.168.1.0) и задёи его маску (255.255.255.0). Также, не забыаем над именем включить флажок "On" для включения сервера.
+
+Нажимаем кнопку "Add". Если бы в данной подсети было несколько вланов, то надо было создать "Pool" для каждого влана, указывая свои шлюзы по-умолчанию, и другие "Start IP Address". Но в данной сети у нас только VLAN1, поэтому одного "Pool" достаточно.
+
+![](./3_DHCP.png)

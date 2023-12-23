@@ -419,6 +419,21 @@ router1(config-if)#ip helper-address 192.168.1.2
 
 ![](./1.3_DHCP.png)
 
+### Задание 2
+
+Чётный хост 192.168.0.0 0.0.255.254
+Нечётный хост192.168.0.1 0.0.255.254
+
+ip access-list extended POP3-IN
+ deny tcp 192.168.0.1 0.0.255.254 host 192.168.101.2 eq pop3
+ permit ip any any
+```
+ interface FastEthernet1/0.101
+ encapsulation dot1Q 101
+ ip address 192.168.101.1 255.255.255.0
+ ip access-group POP3-IN out
+```
+
 ### Задание 3
 
 Первым делом у PC из VLAN2 надо удалить cтатический IP, а DHCP серверу задать статический IP (192.168.12.2), включая маску и шлюз по-умолчанию (192.168.12.1).

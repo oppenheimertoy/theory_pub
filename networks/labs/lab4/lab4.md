@@ -367,6 +367,10 @@ router0(config)#int fa0/0.3
 router0(config-if)#ip access-group VLAN3-IN out
 ```
 
+19 - 49 запретить
+
+99 - 139 чётные запретить минимальным
+
 ##### Настройка AL правого роутера
 Запретим ПК из VLAN6 заходить на web.
 ```

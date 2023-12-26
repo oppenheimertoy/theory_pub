@@ -1,6 +1,6 @@
-# ЛР4 - Access-List
+# ЛР5 - NAT
 
-> Данная лаба построена вокруг использования Access-List
+> Данная лаба построена вокруг NAT
 
 ## Оглавление
 
@@ -30,9 +30,12 @@
 
 Дана следующая тополология:
 
+Зеленые стрелки это преобразование натов типо для верхней правой локалки
+А синия стрелка для нижней правой локалки
+
 ![](./topology.jpg)
 
-В ней соотв нужно настроить\
+В ней соотв нужно настроить
 
 ## Настройка 
 
@@ -41,6 +44,72 @@
 ![](./topology2.jpg)
 
 Далее, согласно рисунку натсроим IP на конечных устройствах.
+
+### Настройка PAT
+
+Для настройки NAT определяем внутренние (смотрят на локальную подсеть) и внешние (смотрят в другие сети)
+интерфейсы роутера роутера
+для соответствующих интерфейсов прописываем команды: ip NAT outside и ip NAT inside
+Например:
+
+```
+router(config)#int fa0/1
+router(config-if)#ip NAT inside
+
+router(config)#int fa0/1
+router(config-if)#ip NAT outside
+
+
+Router(config)#
+Router(config)#ip a
+Router(config)#ip access-list s
+Router(config)#ip access-list standard PAT-10
+Router(config-std-nacl)#perm
+Router(config-std-nacl)#permit 10.0.0.0 ?
+  A.B.C.D  Wildcard bits
+  <cr>
+Router(config-std-nacl)#permit 10.0.0.0 0.255.255.255?
+A.B.C.D  
+Router(config-std-nacl)#permit 10.0.0.0 0.255.255.255
+Router(config-std-nacl)#
+
+Router(config)#ip nat inside source list PAT-10 interface fastEthernet 0/0 overload 
+```
+
+Команда `ip nat inside source list` используется в Cisco IOS для настройки NAT (Network Address Translation). Давайте разберем, что означают компоненты этой команды:
+
+1. `ip nat inside source`: Эта часть команды указывает, что вы настраиваете перевод адресов (NAT) для пакетов, идущих изнутри сети.
+
+2. `list PAT-10`: Это ссылка на расширенный список доступа (ACL), в котором определены те адреса или диапазоны адресов, которые будут подвергнуты переводу. В данном случае, скорее всего, PAT-10 - это имя для такого списка доступа.
+
+3. `interface fastEthernet 0/0`: Эта часть команды указывает интерфейс, через который будет выполняться NAT. В данном случае, перевод будет выполняться через интерфейс FastEthernet 0/0.
+
+4. `overload`: Этот параметр указывает, что вы используете PAT (Port Address Translation), также известный как портовый перевод. Это означает, что несколько устройств в вашей локальной сети будут использовать один и тот же глобальный IP-адрес, но с разными портами для идентификации каждого устройства.
+
+Таким образом, эта команда означает, что для пакетов, соответствующих условиям в ACL PAT-10, будет выполняться перевод адресов (NAT) через интерфейс FastEthernet 0/0 с использованием PAT для обеспечения уникальности портов для каждого устройства в локальной сети.
+
+### Настройка Static NAT
+
+```
+Router(config)#ip nat inside source static 192.168.20.3 172.18.0.4
+```
+
+### Настройка Dynamic NAT
+
+Задаём пул адресов, вначале указываем имя пула, начальный IP, конечный IP и маску
+
+```
+Router(config)# ip nat pool Dynamic-NAT 172.17.0.10 172.17.0.20 netmask 255.255.255.0
+Router(config)#ip access-list standard Dynamic-list
+Router(config-std-nacl)#permit 192.168.20.0 0.0.0.255
+Router(config-std-nacl)#ex
+
+Router(config)# int fa0/0
+Router(config-if)#ip nat outside
+Router(config-if)#int fa0/1
+Router(config-if)#ip nat inside
+Router(config)#ip nat inside source list Dynamic-list pool Dynamic-NAT
+```
 
 ### Настройка VLAN
 
@@ -367,10 +436,6 @@ router0(config)#int fa0/0.3
 router0(config-if)#ip access-group VLAN3-IN out
 ```
 
-19 - 49 запретить
-
-99 - 139 чётные запретить минимальным
-
 ##### Настройка AL правого роутера
 Запретим ПК из VLAN6 заходить на web.
 ```
@@ -423,21 +488,6 @@ router1(config-if)#ip helper-address 192.168.1.2
 
 ![](./1.3_DHCP.png)
 
-### Задание 2
-
-Чётный хост 192.168.0.0 0.0.255.254
-Нечётный хост192.168.0.1 0.0.255.254
-
-ip access-list extended POP3-IN
- deny tcp 192.168.0.1 0.0.255.254 host 192.168.101.2 eq pop3
- permit ip any any
-```
- interface FastEthernet1/0.101
- encapsulation dot1Q 101
- ip address 192.168.101.1 255.255.255.0
- ip access-group POP3-IN out
-```
-
 ### Задание 3
 
 Первым делом у PC из VLAN2 надо удалить cтатический IP, а DHCP серверу задать статический IP (192.168.12.2), включая маску и шлюз по-умолчанию (192.168.12.1).
@@ -462,3 +512,9 @@ router1(config-subif)#ip helper-address 192.168.12.2
 Нажимаем кнопку "Add". Если бы в данной подсети было несколько вланов, то надо было создать "Pool" для каждого влана, указывая свои шлюзы по-умолчанию, и другие "Start IP Address". Но в данной сети у нас только VLAN1, поэтому одного "Pool" достаточно.
 
 ![](./3_DHCP.png)
+
+
+19 - 49 запретить
+
+99 - 139 чётные запретить минимальным
+
